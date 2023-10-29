@@ -12,7 +12,6 @@ module Fns
   # Сессия "живет" ограниченное время, поэтому ее можно будет
   # восстанавливать с момощгю метода refresh
   class Session
-
     attr_reader :session_id
 
     def initialize(phone_number)

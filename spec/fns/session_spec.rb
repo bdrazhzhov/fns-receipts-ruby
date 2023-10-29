@@ -2,7 +2,7 @@
 
 RSpec.describe Fns::Session do
   let(:phone_number) { rand.to_s }
-  let(:session) { Fns::Session.new(phone_number) }
+  let(:session) { described_class.new(phone_number) }
   let(:code) { rand.to_s }
 
   describe '#verify' do
@@ -28,10 +28,13 @@ RSpec.describe Fns::Session do
         }.to_json
       end
 
-      it 'verifies client session by code from SMS and sets session_id with refresh_token' do
-        session.verify(code)
+      before { session.verify(code) }
 
+      it 'session_id is set' do
         expect(session.session_id).to eq(session_id)
+      end
+
+      it 'refresh_token is set' do
         expect(session.instance_variable_get(:@refresh_token)).to eq(refresh_token)
       end
     end
@@ -69,10 +72,13 @@ RSpec.describe Fns::Session do
         }.to_json
       end
 
-      it 'refreshes session_id with refresh_token' do
-        session.refresh
+      before { session.refresh }
 
+      it 'session_id is set' do
         expect(session.session_id).to eq(new_session_id)
+      end
+
+      it 'refresh_token is set' do
         expect(session.instance_variable_get(:@refresh_token)).to eq(new_refresh_token)
       end
     end

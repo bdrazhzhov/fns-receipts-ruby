@@ -16,7 +16,7 @@ RSpec.describe Fns::Client do
       let(:response_status) { 204 }
 
       it 'returns client session' do
-        result = Fns::Client.create_session(phone_number)
+        result = described_class.create_session(phone_number)
         expect(result).to be_a Fns::Session
       end
     end
@@ -25,7 +25,7 @@ RSpec.describe Fns::Client do
       let(:response_status) { 400 }
 
       it 'raises an exception' do
-        expect { Fns::Client.create_session(phone_number) }.to raise_error(Fns::Error)
+        expect { described_class.create_session(phone_number) }.to raise_error(Fns::Error)
       end
     end
   end
@@ -36,7 +36,7 @@ RSpec.describe Fns::Client do
     let(:session_id) { rand.to_s }
 
     before do
-      allow(Fns::Client).to receive(:get_ticket).and_return(ticket_id)
+      allow(described_class).to receive(:get_ticket).and_return(ticket_id)
       session.instance_variable_set(:@session_id, session_id)
 
       stub_request(:get, "#{Fns::API_BASE_URL}/tickets/#{ticket_id}")
@@ -49,7 +49,7 @@ RSpec.describe Fns::Client do
       let(:bill_data) { { 'a' => 1, 'b' => 2 } }
 
       it 'return bill data' do
-        result = Fns::Client.get_bill_data(session, '')
+        result = described_class.get_bill_data(session, '')
         expect(result).to eq(bill_data)
       end
     end
@@ -59,7 +59,7 @@ RSpec.describe Fns::Client do
       let(:bill_data) { '' }
 
       it 'raises error returned by API' do
-        expect { Fns::Client.get_bill_data(session, '') }.to raise_error(Fns::Error)
+        expect { described_class.get_bill_data(session, '') }.to raise_error(Fns::Error)
       end
     end
   end
@@ -85,7 +85,7 @@ RSpec.describe Fns::Client do
       let(:result_data) { { id: ticket_id, kind: 'kkt' }.to_json }
 
       it 'return ticket id' do
-        result = Fns::Client.send(:get_ticket, session, qr)
+        result = described_class.send(:get_ticket, session, qr)
         expect(result).to eq(ticket_id)
       end
     end
@@ -95,7 +95,7 @@ RSpec.describe Fns::Client do
       let(:result_data) { '' }
 
       it 'raises error returned by API' do
-        expect { Fns::Client.send(:get_ticket, session, qr) }.to raise_error(Fns::Error)
+        expect { described_class.send(:get_ticket, session, qr) }.to raise_error(Fns::Error)
       end
     end
   end
