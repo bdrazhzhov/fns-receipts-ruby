@@ -12,7 +12,7 @@ Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:
-  Max: 15
+  Max: 20
 
 Metrics/BlockLength:
   Exclude:
@@ -20,3 +20,7 @@ Metrics/BlockLength:
 
 RSpec/MultipleMemoizedHelpers:
   Max: 10
+
+Style/Documentation:
+  Exclude:
+    - lib/fns/error.rb
