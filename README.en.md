@@ -1,46 +1,45 @@
 # Fns::Receipts::Ruby
-
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/bdrazhzhov/fns-receipts-ruby/blob/master/README.en.md) [![ru](https://img.shields.io/badge/lang-ru-blue.svg)](https://github.com/bdrazhzhov/fns-receipts-ruby/blob/master/README.md)
 
-Это обертка над API сервиса ФНС, позволяющего получить полную информацию о чеках, отсканировав находящиеся на них qr-коды.
+This a FTS API wrapper allowing to get receipts full info after scanning a qr code on them.
 
-## Установка
+## Installation
 
-Добавьте эту строчку в Gemfile вашего приложения:
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'fns-receipts-ruby'
 ```
 
-Потом выполните:
+And then execute:
 
 ```bash
 $ bundle
 ```
 
-Или установите с помощью:
+Or install it yourself as:
 
 ```bash
 $ gem install fns-receipts-ruby
 ```
 
-## Как использовать
+## Usage
 
-Первым шагом необходимо создать сессию для пользователя. Для этого нужно отправить пользователю смс с кодом подтверждения и передать этот код в API ФНС.
+1st is user session creation. It's required to send to user SMS containing a confirmation code. After that the code should be sent to FTS API.
 
-### Отправляем смс с кодом подтверждения
+### Sending SMS with confirmation code
 
 ```ruby
 Fns::Client.create_session('+123456789')
 ```
 
-### Отправляем код подтверждения в API ФНС
+### Sending confirmation code to FTS API
 
 ```ruby
 Fns::Client.verify_session('+123456789', '1234')
 ```
 
-### После подтверждения получаем следующие данные в ответ
+### The similar data should be received after the confirmation
 
 ```ruby
 {
@@ -49,16 +48,16 @@ Fns::Client.verify_session('+123456789', '1234')
 }
 ```
 
-- `session_id` — идентификатор сессии, который необходимо использовать для получения полной информации из чека
-- `refresh_token` — этот токен используется для восстановления сессии. Сами сессии API ФНС "живут" короткое время, поэтому может потребоваться восстановить ранее созданную сессию.
+- `session_id` — session id that should be used for receipt full info receiving
+- `refresh_token` — this token is being used for session restoration. FTS API session live a short time so it may be required to restore a session created earlier.
 
-### Теперь можно запросить информацию о чеке
+### Now it's possible to request receipt full info
 
 ```ruby
 Fns::Client.get_bill_data('6538aff1f7938adb0627d753:bc1e0927-9c06-4301-851d-be705201ade2', 't=20231016T1313&s=2701.00&fn=7281440501188798&i=115621&fp=1865575866&n=1')
 ```
 
-Пример ответа API ФНС c полной информацией о чеке:
+FTS API response with receipt full info example:
 
 ```json
 {
@@ -149,13 +148,13 @@ Fns::Client.get_bill_data('6538aff1f7938adb0627d753:bc1e0927-9c06-4301-851d-be70
 }
 ```
 
-### Восстановление сессии
+### Session restoration
 
 ```ruby
 Fns::Client.refresh_session('aaf40aa5-b257-477b-a104-b99d0df1001d')
 ```
 
-В ответ получаем:
+Response data:
 
 ```ruby
 {
@@ -166,10 +165,12 @@ Fns::Client.refresh_session('aaf40aa5-b257-477b-a104-b99d0df1001d')
 
 Теперь новые `session_id` и `refresh_token` можно использовать для получения информации о чеке и восстановления сессии соотетсвенно.
 
-## Помощь в разработке
+`session_id` and `refresh_token` can be used for receipt full info getting and session restoration.
 
-Сообщения о багах и пулл реквесты приветсвуются на GitHub: https://github.com/bdrazhzhov/fns-receipts-ruby.
+## Contributing
 
-## Лицензия
+Bug reports and pull requests are welcome on GitHub at https://github.com/bdrazhzhov/fns-receipts-ruby.
 
-Исходный код ПО доступен на условиях лицензии [MIT](https://opensource.org/licenses/MIT).
+## License
+
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

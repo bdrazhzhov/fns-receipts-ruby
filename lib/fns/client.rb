@@ -2,7 +2,7 @@
 
 require 'http'
 require 'json'
-require_relative 'session'
+require_relative 'error'
 
 module Fns
   API_BASE_URL = 'https://irkkt-mobile.nalog.ru:8888/v2'
@@ -47,27 +47,69 @@ module Fns
                          }
                        )
 
-        return Fns::Session.new(phone_number) if response.code == 204
+        raise Fns::Error.new(response), response.to_s unless response.code == 204
+      end
 
-        raise Fns::Error, response
+      def verify_session(phone_number, verification_code)
+        response = HTTP.headers(HEADERS)
+                       .post(
+                         "#{API_BASE_URL}/auth/phone/verify",
+                         json: {
+                           phone: phone_number,
+                           client_secret: CLIENT_SECRET,
+                           os: DEVICE_OS,
+                           code: verification_code
+                         }
+                       )
+        raise Fns::Error.new(response), response.to_s unless response.code == 200
+
+        result = JSON.parse(response.to_s)
+
+        {
+          session_id: result['sessionId'],
+          refresh_token: result['refresh_token']
+        }
+      end
+
+      # С помощью выхова этого метода можно восстановить сессию,
+      # время которой уже истекло. После восстановления сессию
+      # можно использовать для получения данных по чекам
+      def refresh_session(refresh_token)
+        response = HTTP.headers(HEADERS)
+                       .post(
+                         "#{API_BASE_URL}/mobile/users/refresh",
+                         json: {
+                           refresh_token: refresh_token,
+                           client_secret: CLIENT_SECRET
+                         }
+                       )
+        raise Fns::UnknownToken.new(response), response.to_s if response.code == 498
+        raise Fns::Error.new(response), response.to_s unless response.code == 200
+
+        result = JSON.parse(response.to_s)
+
+        {
+          session_id: result['sessionId'],
+          refresh_token: result['refresh_token']
+        }
       end
 
       # Возвращает данные чека со списком товаров, находящимся в нем
-      def get_bill_data(session, qr_data)
-        ticket_id = get_ticket(session, qr_data)
+      def get_bill_data(session_id, qr_data)
+        ticket_id = get_ticket(session_id, qr_data)
 
-        response = HTTP.headers(HEADERS.merge(sessionId: session.session_id))
+        response = HTTP.headers(HEADERS.merge(sessionId: session_id))
                        .get("#{API_BASE_URL}/tickets/#{ticket_id}")
 
         return JSON.parse(response.to_s) if response.code == 200
 
-        raise Fns::Error, response
+        raise Fns::Error.new(response), response.to_s
       end
 
       private
 
-      def get_ticket(session, qr_data)
-        response = HTTP.headers(HEADERS.merge(sessionId: session.session_id))
+      def get_ticket(session_id, qr_data)
+        response = HTTP.headers(HEADERS.merge(sessionId: session_id))
                        .post(
                          "#{API_BASE_URL}/ticket",
                          json: { qr: qr_data }
@@ -78,7 +120,7 @@ module Fns
           return result['id']
         end
 
-        raise Fns::Error, response
+        raise Fns::Error.new(response), response.to_s
       end
     end
   end

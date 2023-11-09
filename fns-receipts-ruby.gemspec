@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'lib/fns/version'
+require_relative 'lib/fns'
 
 Gem::Specification.new do |spec|
   spec.name = 'fns-receipts-ruby'
