@@ -1,4 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'fns/error'
-require_relative 'fns/client'
+require 'fns/version'
+require 'fns/error'
+require 'fns/client'
