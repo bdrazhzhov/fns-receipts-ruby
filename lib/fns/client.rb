@@ -5,7 +5,7 @@ require 'json'
 require_relative 'error'
 
 module Fns
-  API_BASE_URL = 'https://irkkt-mobile.nalog.ru:8888/v2'
+  API_BASE_URL = ENV.fetch('FNS_API_BASE_URL', 'https://irkkt-mobile.nalog.ru:8888/v2')
   DEVICE_OS = 'iOS'
   CLIENT_SECRET = 'IyvrAbKt9h/8p6a7QPh8gpkXYQ4='
   CLIENT_VERSION = '2.9.0'
