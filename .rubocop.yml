@@ -24,3 +24,4 @@ RSpec/MultipleMemoizedHelpers:
 Style/Documentation:
   Exclude:
     - lib/fns/error.rb
+    - lib/fns/receipts/ruby.rb
