@@ -103,6 +103,8 @@ module Fns
 
         return JSON.parse(response.to_s) if response.code == 200
 
+        raise Fns::Unauthorized.new(response), response.to_s if response.code == 401
+
         raise Fns::Error.new(response), response.to_s
       end
 
@@ -119,6 +121,8 @@ module Fns
           result = JSON.parse(response.to_s)
           return result['id']
         end
+
+        raise Fns::Unauthorized.new(response), response.to_s if response.code == 401
 
         raise Fns::Error.new(response), response.to_s
       end

@@ -11,4 +11,5 @@ module Fns
   end
 
   class UnknownToken < Error; end
+  class Unauthorized < Error; end
 end

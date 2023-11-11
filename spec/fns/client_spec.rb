@@ -147,6 +147,15 @@ RSpec.describe Fns::Client do
         expect { described_class.get_bill_data(session_id, '') }.to raise_error(Fns::Error)
       end
     end
+
+    context 'when request is unauthorized' do
+      let(:response_status) { 401 }
+      let(:bill_data) { 'Unauthorized' }
+
+      it 'raises Unauthorized exception' do
+        expect { described_class.get_bill_data(session_id, '') }.to raise_error(Fns::Unauthorized)
+      end
+    end
   end
 
   describe '#get_ticket' do
@@ -169,6 +178,15 @@ RSpec.describe Fns::Client do
       it 'return ticket id' do
         result = described_class.send(:get_ticket, session_id, qr)
         expect(result).to eq(ticket_id)
+      end
+    end
+
+    context 'when request is unauthorized' do
+      let(:response_status) { 401 }
+      let(:result_data) { 'Unauthorized' }
+
+      it 'raises Unauthorized exception' do
+        expect { described_class.send(:get_ticket, session_id, qr) }.to raise_error(Fns::Unauthorized)
       end
     end
 
